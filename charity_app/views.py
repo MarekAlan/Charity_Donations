@@ -1,8 +1,13 @@
-from django.shortcuts import render
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.views import View
 
+from charity_app.forms import CreateUserForm, LoginForm
 from charity_app.models import Institution, Donation
 
 
@@ -12,9 +17,17 @@ class LandingPageView(View):
         nb_bags = 0
         donations = Donation.objects.all()
         for donation in donations:
-            donation.quantity += nb_bags
+            nb_bags += donation.quantity
         nb_organizations = Institution.objects.all().count()
+        institution_list = Institution.objects.all()
+        paginator = Paginator(institution_list, 5)
+        page = request.GET.get('page')
+        institutions = paginator.get_page(page)
         ctx = {
+            "institutions": institutions,
+            "foundations": Institution.objects.all().filter(type="Fundacja"),
+            "ngos": Institution.objects.all().filter(type="Organizacja Pozarządowa"),
+            "local": Institution.objects.all().filter(type="Zbiórka Lokalna"),
             "nb_bags": nb_bags,
             "nb_organizations": nb_organizations,
         }
@@ -30,13 +43,37 @@ class AddDonationView(View):
 class LoginView(View):
 
     def get(self, request):
-        return render(request, 'login.html')
+        form = LoginForm()
+        return render(request, 'login.html', {'form': form})
+
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = authenticate(email=email,
+                                password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('index')
+            return render(request, 'login.html', {'form': form})
 
 
 class RegisterView(View):
 
     def get(self, request):
-        return render(request, 'register.html')
+        form = CreateUserForm()
+        return render(request, 'register.html', {'form': form})
+
+    def post(self, request):
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(
+                form.cleaned_data['pass1'])
+            user.save()
+            return redirect('login')
+        return render(request, 'register.html', {'form': form})
 
 
 

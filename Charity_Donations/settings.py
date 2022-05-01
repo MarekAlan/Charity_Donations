@@ -76,13 +76,17 @@ WSGI_APPLICATION = 'Charity_Donations.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'HOST': '127.0.0.1',
-        'NAME': 'charity_donation',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': 'Ja',
-        'PASSWORD': 'Love200',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
+    # 'default': {
+    #     'HOST': '127.0.0.1',
+    #     'NAME': 'charity_donation',
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'USER': 'Ja',
+    #     'PASSWORD': 'Love200',
+    # }
 }
 
 
@@ -108,9 +112,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pl-PL'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'CET'
 
 USE_I18N = True
 
