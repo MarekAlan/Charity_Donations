@@ -19,12 +19,12 @@ class LandingPageView(View):
         for donation in donations:
             nb_bags += donation.quantity
         nb_organizations = Institution.objects.all().count()
-        institution_list = Institution.objects.all()
+        institution_list = Institution.objects.all().order_by('id')
         paginator = Paginator(institution_list, 5)
         page = request.GET.get('page')
         institutions = paginator.get_page(page)
         ctx = {
-            "institutions": institutions,
+            'institutions': institutions,
             "foundations": Institution.objects.all().filter(type="Fundacja"),
             "ngos": Institution.objects.all().filter(type="Organizacja Pozarządowa"),
             "local": Institution.objects.all().filter(type="Zbiórka Lokalna"),
@@ -49,14 +49,14 @@ class LoginView(View):
     def post(self, request):
         form = LoginForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['email']
+            username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            user = authenticate(email=email,
+            user = authenticate(username=username,
                                 password=password)
             if user is not None:
                 login(request, user)
                 return redirect('index')
-            return render(request, 'login.html', {'form': form})
+        return redirect('register')
 
 
 class RegisterView(View):
@@ -71,6 +71,7 @@ class RegisterView(View):
             user = form.save(commit=False)
             user.set_password(
                 form.cleaned_data['pass1'])
+            user.username = form.cleaned_data['email']
             user.save()
             return redirect('login')
         return render(request, 'register.html', {'form': form})
