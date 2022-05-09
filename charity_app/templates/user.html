@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+
+
+
+    <div class="slogan container container--90">
+            <div class="slogan--item">
+                <h1>
+                    Twoje konto:<br />
+                    Imię: {{ request.user.first_name }}<br/>
+                    Nazwisko: {{ request.user.last_name }}<br />
+                    email: {{ request.user.email }}
+                </h1>
+            </div>
+        </div>
+    </header>
+
+
+
+
+{% endblock %}

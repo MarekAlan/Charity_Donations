@@ -6,6 +6,7 @@ from django.db import models
 class Category(models.Model):
     name = models.CharField(max_length=64)
 
+
 TYPES = (
     ("Fundacja", "Fundacja"),
     ("Organizacja Pozarządowa", "Organizacja Pozarządowa"),
@@ -18,6 +19,9 @@ class Institution(models.Model):
     description = models.TextField()
     type = models.CharField(max_length=64, choices=TYPES, default="Fundacja")
     categories = models.ManyToManyField(Category)
+
+    def __str__(self):
+        return self.name
 
 
 class Donation(models.Model):

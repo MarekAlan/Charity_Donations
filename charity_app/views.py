@@ -1,4 +1,5 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
@@ -8,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from charity_app.forms import CreateUserForm, LoginForm
-from charity_app.models import Institution, Donation
+from charity_app.models import Institution, Donation, Category
 
 
 class LandingPageView(View):
@@ -34,10 +35,21 @@ class LandingPageView(View):
         return render(request, 'index.html', ctx)
 
 
-class AddDonationView(View):
+class AddDonationView(LoginRequiredMixin, View):
+
+    login_url = 'login'
 
     def get(self, request):
-        return render(request, 'form.html')
+        categories = Category.objects.all()
+        institutions = Institution.objects.all()
+        ctx = {
+            'categories': categories,
+            'institutions': institutions
+        }
+        return render(request, 'form.html', ctx)
+
+    def post(self, request):
+        return redirect('index')
 
 
 class LoginView(View):
@@ -77,4 +89,14 @@ class RegisterView(View):
         return render(request, 'register.html', {'form': form})
 
 
+class LogOutView(View):
 
+    def get(self, request):
+        logout(request)
+        return redirect('index')
+
+
+class UserView(View):
+
+    def get(self, request):
+        return render(request, 'user.html')
