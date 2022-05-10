@@ -20,13 +20,12 @@ class LandingPageView(View):
         for donation in donations:
             nb_bags += donation.quantity
         nb_organizations = Institution.objects.all().count()
-        institution_list = Institution.objects.all().order_by('id')
-        paginator = Paginator(institution_list, 5)
+        foundations_list = Institution.objects.all().filter(type="Fundacja").order_by('id')
+        paginator = Paginator(foundations_list, 5)
         page = request.GET.get('page')
-        institutions = paginator.get_page(page)
+        foundations = paginator.get_page(page)
         ctx = {
-            'institutions': institutions,
-            "foundations": Institution.objects.all().filter(type="Fundacja"),
+            "foundations": foundations,
             "ngos": Institution.objects.all().filter(type="Organizacja Pozarządowa"),
             "local": Institution.objects.all().filter(type="Zbiórka Lokalna"),
             "nb_bags": nb_bags,

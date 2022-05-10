@@ -85,13 +85,13 @@
                 się zajmują, komu pomagają i czego potrzebują.</p>
 
             <ul class="help--slides-items">
-                 {% for istitution in institutions %}
+                 {% for item in foundations %}
                 <li>
 
                     <div class="col">
 
-                        <div class="title">{{ istitution.name }}</div>
-                        <div class="subtitle">{{ istitution.description }}</div>
+                        <div class="title">{{ item.name }}</div>
+                        <div class="subtitle">{{ item.description }}</div>
                     </div>
 
                     <div class="col">
@@ -104,30 +104,21 @@
 
         <div class="pagination">
     <span class="step-links">
-        {% if institutions.has_previous %}
+        {% if foundations.has_previous %}
             <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ institutions.previous_page_number }}">previous</a>
+            <a href="?page={{ foundations.previous_page_number }}">previous</a>
         {% endif %}
 
         <span class="current">
-            Page {{ institutions.number }} of {{ institutions.paginator.num_pages }}.
+            Page {{ foundations.number }} of {{ foundations.paginator.num_pages }}.
         </span>
 
-        {% if institutions.has_next %}
-            <a href="?page={{ institutions.next_page_number }}">next</a>
-            <a href="?page={{ institutions.paginator.num_pages }}">last &raquo;</a>
+        {% if foundations.has_next %}
+            <a href="?page={{ foundations.next_page_number }}">next</a>
+            <a href="?page={{ foundations.paginator.num_pages }}">last &raquo;</a>
         {% endif %}
     </span>
 </div>
-            <!-- Pagination
-            <ul class="help--slides-pagination">
-              <li><a href="#" class="btn btn--small btn--without-border active" data-page="1">1</a></li>
-              <li><a href="#" class="btn btn--small btn--without-border" data-page="2">2</a></li>
-              <li><a href="#" class="btn btn--small btn--without-border" data-page="3">3</a></li>
-            </ul>
-            -->
-        </div>
-
 
         <!-- SLIDE 2 -->
         <div class="help--slides" data-id="2">
