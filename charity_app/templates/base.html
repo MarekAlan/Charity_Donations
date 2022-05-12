@@ -18,7 +18,7 @@
           <h3>Witaj {{user.first_name}}</h3>
             <ul class="dropdown">
               <li><a href="/user">Profil</a></li>
-              <li><a href="#">Ustawienia</a></li>
+              <li><a href="/update_user">Ustawienia</a></li>
                 {% if user.is_superuser %}
               <li><a href="/admin">Panel Administracyjny</a></li>
                     {% endif %}

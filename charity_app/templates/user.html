@@ -4,17 +4,38 @@
 
 
 
+
     <div class="slogan container container--90">
-            <div class="slogan--item">
-                <h1>
-                    Twoje konto:<br />
-                    Imię: {{ request.user.first_name }}<br/>
-                    Nazwisko: {{ request.user.last_name }}<br />
-                    email: {{ request.user.email }}
-                </h1>
-            </div>
+        <div class="slogan--item">
+            <h2>
+                Twoje konto:<br/>
+                Imię: {{ request.user.first_name }}<br/>
+                Nazwisko: {{ request.user.last_name }}<br/>
+                email: {{ request.user.email }}<br/><br/>
+            </h2>
         </div>
-    </header>
+    </div>
+        </header>
+
+        <body id="user">
+        <div class="slogan container container--90">
+        <div class="slogan--item">
+            <h2>
+
+                Przekazane dary:<br/><br/>
+                {% for donation in donations %}
+                Ilość worków: {{ donation.quantity }} <br/>
+                Dla organizacji: {{ donation.institution }}<br/>
+                    Odbiór {{ donation.pick_up_date }} o godzinie {{ donation.pick_up_time }} <br/>
+                Kategorie: {% for category in donation.categories.all %}
+                    {{ category.name }},
+                        {% endfor %}<br/><br/>
+                {% endfor %}
+
+            </h2>
+        </div>
+    </div>
+    </body>
 
 
 

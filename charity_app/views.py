@@ -1,4 +1,7 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -8,7 +11,7 @@ from django.shortcuts import render, redirect
 # Create your views here.
 from django.views import View
 
-from charity_app.forms import CreateUserForm, LoginForm
+from charity_app.forms import CreateUserForm, LoginForm, UpdateUserForm
 from charity_app.models import Institution, Donation, Category
 
 
@@ -98,4 +101,56 @@ class LogOutView(View):
 class UserView(View):
 
     def get(self, request):
-        return render(request, 'user.html')
+        user_id = request.user.id
+        donations = Donation.objects.all().filter(user_id=user_id)
+        for donation in donations:
+            categories = donation.categories.all()
+        ctx = {
+            "user_id": user_id,
+            "donations": donations,
+            "categories": categories,
+        }
+        return render(request, 'user.html', ctx)
+
+
+class UpdateUserView(View):
+
+    def get(self, request):
+        form_user = UpdateUserForm(instance=request.user)
+        form = PasswordChangeForm(request.user)
+        return render(request, 'update_user.html', {'form_user': form_user, 'form': form})
+
+    def post(self, request):
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Twoje hasło zostało zmienione')
+            return redirect('change_password')
+        else:
+            messages.error(request, 'Spróbuj jeszcze raz.')
+
+        form_user = UpdateUserForm(request.POST, instance=request.user)
+        if form_user.is_valid():
+            user = form_user.save(commit=False)
+            user.username = form_user.cleaned_data['email']
+            user.save()
+            return redirect('login')
+        return render(request, 'update_user.html', {'form_user': form_user, 'form': form})
+
+
+# def change_password(request):
+#     if request.method == 'POST':
+#         form = PasswordChangeForm(request.user, request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             update_session_auth_hash(request, user)
+#             messages.success(request, 'Twoje hasło zostało zmienione')
+#             return redirect('change_password')
+#         else:
+#             messages.error(request, 'Spróbuj jeszcze raz.')
+#     else:
+#         form = PasswordChangeForm(request.user)
+#     return render(request, 'update_user.html', {
+#         'form': form
+#     })
